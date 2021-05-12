@@ -4,7 +4,7 @@ description: "123"
 keywords: "321"
 author: John Doe
 language: en
-timezone: "23"
+timezone: GMT+8
 url: https://lychees.github.io/indieblog3
 permalink: :title/
 permalink_defaults: null
