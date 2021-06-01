@@ -80,7 +80,7 @@
     <article id="post-2021/06/Gh20210687ba99d3586ceac58aea9fc1b9bd4db4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/site_name_to_be_replaced/2021/06/Gh20210687ba99d3586ceac58aea9fc1b9bd4db4/" class="article-date">
-  <time class="dt-published" datetime="2021-06-01T15:07:45.000Z" itemprop="datePublished">2021-06-01</time>
+  <time class="dt-published" datetime="2021-06-01T15:52:50.000Z" itemprop="datePublished">2021-06-01</time>
 </a>
     
   </div>
@@ -99,7 +99,22 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>[cpp]<br>const int N = 5009, M = 2 * 30009;</p>
+        <ul>
+<li><a target="_blank" rel="noopener" href="http://dreamoon4.blogspot.com/2015/05/2015-google-code-jam-round-2.html">http://dreamoon4.blogspot.com/2015/05/2015-google-code-jam-round-2.html</a></li>
+<li><a href=""></a></li>
+</ul>
+<p>[cpp]<br>const int N = int(1e2) + 9;<br>char Map[N][N];<br>int n, m;</p>
+<p>bool impossible(int x, int y) {<br>    for (int i=0;i&lt;n;++i) if (i != x &amp;&amp; Map[i][y] != ‘.’) return 0;<br>    for (int i=0;i&lt;m;++i) if (i != y &amp;&amp; Map[x][i] != ‘.’) return 0;<br>    return 1;<br>}<br>bool to_edge(int x, int y) {<br>    if (Map[x][y] == ‘^’) {<br>        for (int i=0;i&lt;x;++i) if (Map[i][y] != ‘.’) return 0;<br>        return 1;<br>    }<br>    if (Map[x][y] == ‘v’) {<br>        for (int i=x+1;i&lt;n;++i) if (Map[i][y] != ‘.’) return 0;<br>        return 1;<br>    }<br>    if (Map[x][y] == ‘&lt;’) {<br>        for (int i=0;i&lt;y;++i) if (Map[x][i] != ‘.’) return 0;<br>        return 1;<br>    }<br>    if (Map[x][y] == ‘&gt;’) {<br>        for (int i=y+1;i&lt;m;++i) if (Map[x][i] != ‘.’) return 0;<br>        return 1;<br>    }<br>    return 1;<br>}</p>
+<p>void gao() {<br>    int z = 0;<br>    RD(n, m); REP(i, n) RS(Map[i]);<br>    REP_2(i, j, n, m) if (Map[i][j] != ‘.’){<br>        if (impossible(i, j)) {<br>            puts(“IMPOSSIBLE”);<br>            return;<br>        }<br>        if (to_edge(i, j)) {<br>            ++z;<br>        }<br>    }<br>    printf(“%d\n”, z);<br>}</p>
+<p>int main(){</p>
+<p>#ifndef ONLINE_JUDGE<br>    //freopen(“/Users/minakokojima/Documents/GitHub/ACM-Training/Workspace/in.txt”, “r”, stdin);<br>    //freopen(“/Users/minakokojima/Documents/GitHub/ACM-Training/Workspace/out.txt”, “w”, stdout);<br>#endif</p>
+<pre><code>int T; cin &gt;&gt; T; REP_1(i, T) &#123;
+    printf(&quot;Case #%d: &quot;, i);
+    gao();
+&#125;
+</code></pre>
+<p>}<br>[/cpp]</p>
+<p>[cpp]<br>const int N = 5009, M = 2 * 30009;</p>
 <p>//struct Network_Flow{</p>
 <p>int D[N], hd[N], suc[M], to[M], cap[M];<br>int n, m, s, t;</p>
 <p>inline void ae(int x, int y, int c){<br>    suc[m] = hd[x], hd[x] = m, to[m] = y, cap[m++] = c,<br>    suc[m] = hd[y], hd[y] = m, to[m] = x, cap[m++] = 0;<br>}</p>
@@ -120,7 +135,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://username_to_be_replaced.github.io/site_name_to_be_replaced/2021/06/Gh20210687ba99d3586ceac58aea9fc1b9bd4db4/" data-id="ckpdp8hjm0002ion57aj65hik" data-title="Google Code Jam 2015 Round2" class="article-share-link">Share</a>
+      <a data-url="https://username_to_be_replaced.github.io/site_name_to_be_replaced/2021/06/Gh20210687ba99d3586ceac58aea9fc1b9bd4db4/" data-id="ckpdquhjf0002fln989u6gld2" data-title="Google Code Jam 2015 Round2" class="article-share-link">Share</a>
       
       
       
@@ -159,7 +174,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://username_to_be_replaced.github.io/site_name_to_be_replaced/2021/05/Gh202105cc5903e2d58134b94e113f0dec7d4e5d/" data-id="ckpdp8hjl0001ion5gfoa1xqh" data-title="gao" class="article-share-link">Share</a>
+      <a data-url="https://username_to_be_replaced.github.io/site_name_to_be_replaced/2021/05/Gh202105cc5903e2d58134b94e113f0dec7d4e5d/" data-id="ckpdquhjd0001fln95wc8avie" data-title="gao" class="article-share-link">Share</a>
       
       
       
@@ -198,7 +213,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://username_to_be_replaced.github.io/site_name_to_be_replaced/2021/05/Gh2021053cc5c25fc70a9f76a11bd3fa404f5968/" data-id="ckpdp8hjh0000ion5bnxl13wq" data-title="Demo" class="article-share-link">Share</a>
+      <a data-url="https://username_to_be_replaced.github.io/site_name_to_be_replaced/2021/05/Gh2021053cc5c25fc70a9f76a11bd3fa404f5968/" data-id="ckpdquhj90000fln90dbdcunb" data-title="Demo" class="article-share-link">Share</a>
       
       
       
