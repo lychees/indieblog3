@@ -4,16 +4,16 @@
 
 # Site
 title: 某岛
-subtitle: '某岛'
-description: '某岛'
+subtitle: 某岛
+description: 某岛
 keywords:
 author: John Doe
 language: en
-timezone: ''
+timezone: Etc/GMT+8
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: https://username_to_be_replaced.github.io/site_name_to_be_replaced
+url: https://lychees.github.io/indieblog3
 permalink: :title/
 permalink_defaults:
 pretty_urls:
