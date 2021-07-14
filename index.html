@@ -80,7 +80,7 @@
     <article id="post-2021/07/Gh202107894a6bd2ea130d04aa4218c73231fe6e" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/indieblog3/2021/07/Gh202107894a6bd2ea130d04aa4218c73231fe6e/" class="article-date">
-  <time class="dt-published" datetime="2021-07-15T01:44:44.000Z" itemprop="datePublished">2021-07-14</time>
+  <time class="dt-published" datetime="2021-07-15T02:00:17.000Z" itemprop="datePublished">2021-07-14</time>
 </a>
     
   </div>
@@ -104,12 +104,18 @@
 <p>岛娘案：网络考古，互联网时光机万岁！！！<br>文章来源：<a target="_blank" rel="noopener" href="https://web.archive.org/web/20180828141024/https://johanli.com/blog">https://web.archive.org/web/20180828141024/https://johanli.com/blog</a></p>
 </blockquote>
 <p>Over a year ago, I set out to remake a game called Uncharted Waters 2. This month I reached a milestone, having extracted the tilesets and tilemap of its world map. As no one has detailed this, I’d like to contribute.</p>
-<p><img src="https://ssimg.frontenduse.top/article/2021/07/14/8a2e329fab9b1d0fc9710c333f656032.png" alt="image.png"></p>
-<p>Much of my work is thanks to <a target="_blank" rel="noopener" href="https://tieba.baidu.com/p/2468272446?red_tag=2620007249">an old discussion on a Chinese forum, where a user called botx had outlined the general algorithm</a>. My implementation, along with the relevant game files, are available on GitHub.</p>
+<p><img src="https://ssimg.frontenduse.top/article/2021/07/14/8a2e329fab9b1d0fc9710c333f656032.png" alt="The world map in Uncharted Waters 2"></p>
+<center style="color:#C0C0C0;">The world map in Uncharted Waters 2</center> <br>
+
+<p>Much of my work is thanks to <a target="_blank" rel="noopener" href="https://tieba.baidu.com/p/2468272446?red_tag=2620007249">an old discussion on a Chinese forum, where a user called botx had outlined the general algorithm</a>. My implementation, along with the relevant game files, are <a target="_blank" rel="noopener" href="https://github.com/JohanLi/uncharted-waters-2">available on GitHub</a>.</p>
 <h2 id="At-a-Glance"><a href="#At-a-Glance" class="headerlink" title="At a Glance"></a>At a Glance</h2><p>The game splits the world map into three parts. The first part contains Europe and Africa, the second part Asia and Australia, and in the third part you will find the Americas. Each part consists of 30 * 45 blocks. 12 * 12 large tiles form a block, where each large tile in turn consists of 2 * 2 regular tiles.</p>
 <p>Both the regular and large tiles are tilesets. The regular tiles are 16 * 16 pixels in size, of which there with 128 variations. The large tiles are 256 permutations of four regular tiles, and 32 * 32 pixels in size.</p>
 <p>In short, the approach is to extract these two tilesets first. Then, move onto the blocks and figure out their indices. Map each index to a large tile, which in turn maps to 2 * 2 regular tiles. Afterwards, perform some extra processing for, among others, coastal tiles.</p>
 <p>The raw data comes from the game files WORLDMAP.000, WORLDMAP.001, WORLDMAP.002, DATA1.010, DATA1.011 and DATA1.018. To get them, you need to uncompress WORLDMAP.LZW and DATA1.LZW using a tool such as “LS11 Archiver”.</p>
+<p><img src="https://ssimg.frontenduse.top/article/2021/07/14/ea198255548043a3f0d7de8d0a27f67b.png" alt="A breakdown of the three parts of the world map, blocks, large tiles and regular tiles"></p>
+<center style="color:#C0C0C0;">A breakdown of the three parts of the world map, blocks, large tiles and regular tiles</center> <br>
+
+
 <h2 id="Regular-Tileset"><a href="#Regular-Tileset" class="headerlink" title="Regular Tileset"></a>Regular Tileset</h2><p>The first half of DATA1.011 (16384 bytes) contains the 128 regular tiles. Each tile is 16 * 16 pixels in size, where each pixel uses 4 bits.</p>
 <p><img src="https://ssimg.frontenduse.top/article/2021/07/14/9c2b4f67a3d94142224657c8d3752119.png" alt="Uncharted Waters 2 world map regular tileset"></p>
 <p>To extract all pixels, read 1024 bits at a time. Form the first pixel by combining bit 0, 256, 512 and 768 (left-to-right offsets). The second pixel by 1, 257, 513 and 769, and so on. Map these 4-bit values to RGB colors, drawing each tile left-to-right, top-to-bottom. The mapping varies based on time of day in-game; refer to my implementation for details.</p>
@@ -123,7 +129,14 @@
 <p>Like regular tiles, there exists large tiles that are redundant and never used. Some of them even map to out of bounds regular tiles, for which I have replaced with transparent tiles.</p>
 <h2 id="Blocks"><a href="#Blocks" class="headerlink" title="Blocks"></a>Blocks</h2><p>WORLDMAP.000, as well as the two other world map parts, contain 30 * 45 blocks. A block is 12 * 12, where each index maps to a large tileset. In contrast to extracting regular and large tilesets, blocks are less straightforward.</p>
 <p>The game describes each block using a template, together with data about how it differs from it. In total, there are six templates. To start extracting blocks, do the following:</p>
-<p>Skip the first 2700 bytes.<br>Read 8 bits. The value of the three rightmost bits map to a template. The leftmost bit is 1 if the block, in the rare event, matches the template. Otherwise, proceed reading further.<br>Read 144 bits, and take note of when and where 1s occur as they state deviations from the template.<br>For each 1 encountered in the previous step, read 1 byte and use its value to correct the template.<br>Uncharted Waters 2 block templates<br>A block is based on one of these six templates<br>Contrived example:</p>
+<ul>
+<li>Skip the first 2700 bytes.</li>
+<li>Read 8 bits. The value of the three rightmost bits map to a template. The leftmost bit is 1 if the block, in the rare event, matches the template. Otherwise, proceed reading further.</li>
+<li>Read 144 bits, and take note of when and where 1s occur as they state deviations from the template.<br>For each 1 encountered in the previous step, read 1 byte and use its value to correct the template.</li>
+<li>Uncharted Waters 2 block templates</li>
+</ul>
+<p><img src="https://ssimg.frontenduse.top/article/2021/07/14/95326ea56322e65219326f6d538a6657.png" alt="iA block is based on one of these six templates"></p>
+<p>Contrived example:</p>
 <p>The first 8 bits are 00000101. The three rightmost bits are 101, which refers to template number 5. The leftmost bit is 0, meaning there are differences.<br>Reading the next 144 bits, we find that the 13th and 131st bit are 1s.<br>We continue to read 2 bytes, and find that the first byte has a value of 16 and the second byte 17.<br>The resulting 12 * 12 block is all sea except two large tiles: a port at (0, 1) and a village at (11, 10).<br>Each block takes up a varying number of bytes — some take just a byte, while others 1 + 18 + the number of 1s within the 144 bits.</p>
 <h2 id="Coastal-Tiles"><a href="#Coastal-Tiles" class="headerlink" title="Coastal Tiles"></a>Coastal Tiles</h2><p>Uncharted Waters 2 world map coastal tiles<br>Replacing regular sea tiles, before and after<br>Having extracted all blocks, replace regular sea tiles that neighbor land to give coasts a less jagged look. To determine their replacements, iterate all regular sea tiles and do the following:</p>
 <p>Form 8 bits by going counterclockwise through each adjacent tile. The first, leftmost bit comes from the top left tile. The obtained bit is 1 if the adjacent tile is land (non-water and non-coast), and 0 otherwise.<br>Using this 8-bit value, add 256 to it to get n. Read the nth byte of DATA1.010, of which its value replaces the regular sea tile.<br>Example:</p>
@@ -139,7 +152,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://lychees.github.io/indieblog3/2021/07/Gh202107894a6bd2ea130d04aa4218c73231fe6e/" data-id="ckr3as30m0003bmne41fm88r5" data-title="Extracting the World Map of Uncharted Waters 2" class="article-share-link">Share</a>
+      <a data-url="https://lychees.github.io/indieblog3/2021/07/Gh202107894a6bd2ea130d04aa4218c73231fe6e/" data-id="ckr3bbwqe000391n6541i89wt" data-title="Extracting the World Map of Uncharted Waters 2" class="article-share-link">Share</a>
       
       
       
@@ -213,7 +226,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://lychees.github.io/indieblog3/2021/06/Gh20210687ba99d3586ceac58aea9fc1b9bd4db4/" data-id="ckr3as30k0002bmneh3j9c8ar" data-title="Google Code Jam 2015 Round2" class="article-share-link">Share</a>
+      <a data-url="https://lychees.github.io/indieblog3/2021/06/Gh20210687ba99d3586ceac58aea9fc1b9bd4db4/" data-id="ckr3bbwqd000291n6dln3baos" data-title="Google Code Jam 2015 Round2" class="article-share-link">Share</a>
       
       
       
@@ -252,7 +265,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://lychees.github.io/indieblog3/2021/05/Gh202105cc5903e2d58134b94e113f0dec7d4e5d/" data-id="ckr3as30j0001bmnebcgk03xl" data-title="gao" class="article-share-link">Share</a>
+      <a data-url="https://lychees.github.io/indieblog3/2021/05/Gh202105cc5903e2d58134b94e113f0dec7d4e5d/" data-id="ckr3bbwqb000191n6c1vabs5t" data-title="gao" class="article-share-link">Share</a>
       
       
       
@@ -291,7 +304,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://lychees.github.io/indieblog3/2021/05/Gh2021053cc5c25fc70a9f76a11bd3fa404f5968/" data-id="ckr3as30c0000bmnee50xcooo" data-title="Demo" class="article-share-link">Share</a>
+      <a data-url="https://lychees.github.io/indieblog3/2021/05/Gh2021053cc5c25fc70a9f76a11bd3fa404f5968/" data-id="ckr3bbwq7000091n63c0c3xml" data-title="Demo" class="article-share-link">Share</a>
       
       
       
