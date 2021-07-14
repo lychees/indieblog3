@@ -80,7 +80,7 @@
     <article id="post-2021/07/Gh202107894a6bd2ea130d04aa4218c73231fe6e" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/indieblog3/2021/07/Gh202107894a6bd2ea130d04aa4218c73231fe6e/" class="article-date">
-  <time class="dt-published" datetime="2021-07-15T02:00:17.000Z" itemprop="datePublished">2021-07-14</time>
+  <time class="dt-published" datetime="2021-07-15T02:05:50.000Z" itemprop="datePublished">2021-07-14</time>
 </a>
     
   </div>
@@ -137,22 +137,43 @@
 </ul>
 <p><img src="https://ssimg.frontenduse.top/article/2021/07/14/95326ea56322e65219326f6d538a6657.png" alt="iA block is based on one of these six templates"></p>
 <p>Contrived example:</p>
-<p>The first 8 bits are 00000101. The three rightmost bits are 101, which refers to template number 5. The leftmost bit is 0, meaning there are differences.<br>Reading the next 144 bits, we find that the 13th and 131st bit are 1s.<br>We continue to read 2 bytes, and find that the first byte has a value of 16 and the second byte 17.<br>The resulting 12 * 12 block is all sea except two large tiles: a port at (0, 1) and a village at (11, 10).<br>Each block takes up a varying number of bytes — some take just a byte, while others 1 + 18 + the number of 1s within the 144 bits.</p>
-<h2 id="Coastal-Tiles"><a href="#Coastal-Tiles" class="headerlink" title="Coastal Tiles"></a>Coastal Tiles</h2><p>Uncharted Waters 2 world map coastal tiles<br>Replacing regular sea tiles, before and after<br>Having extracted all blocks, replace regular sea tiles that neighbor land to give coasts a less jagged look. To determine their replacements, iterate all regular sea tiles and do the following:</p>
-<p>Form 8 bits by going counterclockwise through each adjacent tile. The first, leftmost bit comes from the top left tile. The obtained bit is 1 if the adjacent tile is land (non-water and non-coast), and 0 otherwise.<br>Using this 8-bit value, add 256 to it to get n. Read the nth byte of DATA1.010, of which its value replaces the regular sea tile.<br>Example:</p>
-<p>Of a regular sea tile, all three adjacent tiles to the top are land while the rest are sea. This gives us the bits 10000011.<br>Adding 256 to the 8-bit value of 131, we get 387. As the 387th byte of DATA1.010 is 2, change the regular tile from 0 to 2.</p>
-<h2 id="Deserts-and-Other-Terrain"><a href="#Deserts-and-Other-Terrain" class="headerlink" title="Deserts and Other Terrain"></a>Deserts and Other Terrain</h2><p>Uncharted Waters 2 world map deserts and other terrain<br>Three sequences of before and after: filling deserts, updating polar regions, and updating temperate zones<br>Of the few deserts in the world map, blocks only contain data about their edges. To fill their bodies, iterate regular desert tiles (89) and replace the right and bottom tiles to also be 89 if they are land tiles (65). Iterate left-to-right, top-to-bottom, including the newly replaced tiles. Afterwards, replace all desert tiles which border non-desert.</p>
+<ul>
+<li>The first 8 bits are 00000101. The three rightmost bits are 101, which refers to template number 5. The leftmost bit is 0, meaning there are differences.</li>
+<li>Reading the next 144 bits, we find that the 13th and 131st bit are 1s.</li>
+<li>We continue to read 2 bytes, and find that the first byte has a value of 16 and the second byte 17.</li>
+<li>The resulting 12 * 12 block is all sea except two large tiles: a port at (0, 1) and a village at (11, 10).</li>
+</ul>
+<p>Each block takes up a varying number of bytes — some take just a byte, while others 1 + 18 + the number of 1s within the 144 bits.</p>
+<h2 id="Coastal-Tiles"><a href="#Coastal-Tiles" class="headerlink" title="Coastal Tiles"></a>Coastal Tiles</h2><p>Uncharted Waters 2 world map coastal tiles</p>
+<p><img src="https://ssimg.frontenduse.top/article/2021/07/14/c3282f65672c8fc2a2e11d03e0c0e7fd.gif" alt="Replacing regular sea tiles, before and after"></p>
+<p>Having extracted all blocks, replace regular sea tiles that neighbor land to give coasts a less jagged look. To determine their replacements, iterate all regular sea tiles and do the following:</p>
+<ul>
+<li><p>Form 8 bits by going counterclockwise through each adjacent tile. The first, leftmost bit comes from the top left tile. The obtained bit is 1 if the adjacent tile is land (non-water and non-coast), and 0 otherwise.</p>
+</li>
+<li><p>Using this 8-bit value, add 256 to it to get n. Read the nth byte of DATA1.010, of which its value replaces the regular sea tile.<br>Example:</p>
+</li>
+<li><p>Of a regular sea tile, all three adjacent tiles to the top are land while the rest are sea. This gives us the bits 10000011.</p>
+</li>
+<li><p>Adding 256 to the 8-bit value of 131, we get 387. As the 387th byte of DATA1.010 is 2, change the regular tile from 0 to 2.</p>
+</li>
+</ul>
+<h2 id="Deserts-and-Other-Terrain"><a href="#Deserts-and-Other-Terrain" class="headerlink" title="Deserts and Other Terrain"></a>Deserts and Other Terrain</h2><p><img src="https://ssimg.frontenduse.top/article/2021/07/14/2932a2b7d53ee3efdb9a7456782e747c.gif" alt="Three sequences of before and after: filling deserts, updating polar regions, and updating temperate zones"></p>
+<p>Of the few deserts in the world map, blocks only contain data about their edges. To fill their bodies, iterate regular desert tiles (89) and replace the right and bottom tiles to also be 89 if they are land tiles (65). Iterate left-to-right, top-to-bottom, including the newly replaced tiles. Afterwards, replace all desert tiles which border non-desert.</p>
 <p>Blocks for the most part only express a single, default terrain, where regular land tiles are 65. Based on specific rules, apply corrections to them and coastal tiles. For the polar regions, which are the first and last block rows, add 16 to cover them by ice. For the temperate zones, rows 1 to 13 and 31 to 43, add 8. These corrections are only applied to default terrain: some land south of the Straight of Magellan, while in the last block row, is not covered by ice.</p>
 <p>This section contains few details as I have not understood how the game applies them. If one has gotten this far, however, defining the mapping rules for desert “coasts” should not be an ardous undertaking.</p>
 <p>As a side note, I made changes to a handful regular tiles to correct what appears to be minor oversights.</p>
 <h2 id="Closing-Thoughts"><a href="#Closing-Thoughts" class="headerlink" title="Closing Thoughts"></a>Closing Thoughts</h2><p>I found the approach Uncharted Waters 2 uses to compress data fascinating — utilizing two tilesets, storing blocks as template differences, and deriving coastal tiles and terrain. It’s funny how this contrasts what we can afford doing today, bundling entire web browsers with desktop applications.</p>
 <p>Next up for my remake is making it possible to sail around the world. I foresee a couple of challenges:</p>
-<p>How should the canvas be drawn? Its appearance changes often, as the color map varies with the in-game time. Drawing the entire map as a base, which I did for ports, is out of the question as this map is much larger.<br>Uncharted Waters 2 has AI fleets that sail around the world, and with a purpose. This means that coding their behavior will be needed. They need to be able to find their way to all ports, as well as hunt you down in the case of corsairs.<br>Investigation needs to be carried out to understand how the game simulates wind and ocean current. Are things like the Gulf Stream, westerlies and trade winds implemented in the game? Where and how do storms occur?</p>
+<ul>
+<li>How should the canvas be drawn? Its appearance changes often, as the color map varies with the in-game time. Drawing the entire map as a base, which I did for ports, is out of the question as this map is much larger.</li>
+<li>Uncharted Waters 2 has AI fleets that sail around the world, and with a purpose. This means that coding their behavior will be needed. They need to be able to find their way to all ports, as well as hunt you down in the case of corsairs.</li>
+<li>Investigation needs to be carried out to understand how the game simulates wind and ocean current. Are things like the Gulf Stream, westerlies and trade winds implemented in the game? Where and how do storms occur?</li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://lychees.github.io/indieblog3/2021/07/Gh202107894a6bd2ea130d04aa4218c73231fe6e/" data-id="ckr3bbwqe000391n6541i89wt" data-title="Extracting the World Map of Uncharted Waters 2" class="article-share-link">Share</a>
+      <a data-url="https://lychees.github.io/indieblog3/2021/07/Gh202107894a6bd2ea130d04aa4218c73231fe6e/" data-id="ckr3bj3zc00038wn7hijm7cbl" data-title="Extracting the World Map of Uncharted Waters 2" class="article-share-link">Share</a>
       
       
       
@@ -226,7 +247,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://lychees.github.io/indieblog3/2021/06/Gh20210687ba99d3586ceac58aea9fc1b9bd4db4/" data-id="ckr3bbwqd000291n6dln3baos" data-title="Google Code Jam 2015 Round2" class="article-share-link">Share</a>
+      <a data-url="https://lychees.github.io/indieblog3/2021/06/Gh20210687ba99d3586ceac58aea9fc1b9bd4db4/" data-id="ckr3bj3zb00028wn71rrmfs54" data-title="Google Code Jam 2015 Round2" class="article-share-link">Share</a>
       
       
       
@@ -265,7 +286,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://lychees.github.io/indieblog3/2021/05/Gh202105cc5903e2d58134b94e113f0dec7d4e5d/" data-id="ckr3bbwqb000191n6c1vabs5t" data-title="gao" class="article-share-link">Share</a>
+      <a data-url="https://lychees.github.io/indieblog3/2021/05/Gh202105cc5903e2d58134b94e113f0dec7d4e5d/" data-id="ckr3bj3z900018wn77r41etd7" data-title="gao" class="article-share-link">Share</a>
       
       
       
@@ -304,7 +325,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://lychees.github.io/indieblog3/2021/05/Gh2021053cc5c25fc70a9f76a11bd3fa404f5968/" data-id="ckr3bbwq7000091n63c0c3xml" data-title="Demo" class="article-share-link">Share</a>
+      <a data-url="https://lychees.github.io/indieblog3/2021/05/Gh2021053cc5c25fc70a9f76a11bd3fa404f5968/" data-id="ckr3bj3z400008wn7bdzl2w42" data-title="Demo" class="article-share-link">Share</a>
       
       
       
